@@ -1,4 +1,4 @@
-module LTMLLM
+module github.com/aldarisbm/ltmllm
 
 go 1.20
 
