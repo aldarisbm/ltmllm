@@ -1,8 +1,8 @@
 package main
 
 import (
-	"LTMLLM/config"
 	"fmt"
+	"github.com/aldarisbm/ltmllm/config"
 )
 
 func main() {

@@ -3,19 +3,8 @@ package config
 import "os"
 import "gopkg.in/yaml.v2"
 
-type Config struct {
-	OpenAIKey   string `yaml:"open_ai_key"`
-	OpenAIModel string `yaml:"open_ai_model"`
-
-	DBName     string `yaml:"db_name"`
-	DBUrl      string `yaml:"db_url"`
-	DBPort     string `yaml:"db_port"`
-	DBUser     string `yaml:"db_user"`
-	DBPassword string `yaml:"db_password"`
-}
-
 func NewConfig() *Config {
-	f, err := os.Open("config.yml")
+	f, err := os.Open(PropertiesFile)
 	if err != nil {
 		panic(err)
 	}
@@ -29,8 +18,8 @@ func NewConfig() *Config {
 	}
 
 	// loading secrets from env vars
-	cfg.DBPassword = os.Getenv("OPENAI_KEY")
-	cfg.OpenAIKey = os.Getenv("DB_PASSWORD")
+	cfg.OpenAIConfig.APIKey = os.Getenv("OPENAI_KEY")
+	cfg.DatabaseConfig.Password = os.Getenv("DB_PASSWORD")
 
 	return &cfg
 }
