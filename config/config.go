@@ -20,5 +20,6 @@ func NewConfig() *Config {
 	// loading secrets from env vars
 	cfg.OpenAIConfig.APIKey = os.Getenv("OPENAI_KEY")
 	cfg.DatabaseConfig.Password = os.Getenv("DB_PASSWORD")
+	cfg.PineconeConfig.APIKey = os.Getenv("PINECONE_KEY")
 	return &cfg
 }
