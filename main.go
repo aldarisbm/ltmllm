@@ -1,11 +1,12 @@
 package main
 
 import (
-	"fmt"
 	"github.com/aldarisbm/ltmllm/config"
+	"github.com/aldarisbm/ltmllm/llm"
 )
 
 func main() {
 	conf := config.NewConfig()
-	fmt.Printf("%v\n", conf)
+	cb := llm.NewChatBot(conf)
+	cb.Chat()
 }

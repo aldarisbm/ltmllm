@@ -6,12 +6,14 @@ type Config struct {
 }
 
 type OpenAIConfig struct {
-	Model       string  `yaml:"model"`
-	APIKey      string  `yaml:"api_key,omitempty"`
-	ModenN      int     `yaml:"model_n"`
-	MaxTokens   int     `yaml:"max_tokens"`
-	Temperature float64 `yaml:"temperature"`
-	Stream      bool    `yaml:"stream"`
+	APIKey        string  `yaml:"api_key,omitempty"`
+	MaxTokens     int     `yaml:"max_tokens"`
+	Model         string  `yaml:"model"`
+	ModelN        int     `yaml:"model_n"`
+	Prompt        string  `yaml:"prompt"`
+	Stream        bool    `yaml:"stream"`
+	SystemContext string  `yaml:"system_context"`
+	Temperature   float32 `yaml:"temperature"`
 }
 
 type DBConfig struct {
