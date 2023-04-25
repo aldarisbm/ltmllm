@@ -76,7 +76,6 @@ func (b *ChatBot) processStream(stream *openai.ChatCompletionStream) {
 	for {
 		resp, err := stream.Recv()
 		if err == io.EOF {
-			fmt.Printf("stream is done\n")
 			break
 		}
 		fmt.Print(resp.Choices[0].Delta.Content)
