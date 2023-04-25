@@ -1,1 +1,17 @@
-idea
+### OpenAI
+openai:
+  model: gpt-4
+  model_n: 1
+  max_tokens: 0
+  temperature: 0.5
+  stream: true
+  prompt: "Enter something here: "
+  system_context: |
+    You're GoGPT an expert Golang programmer.
+
+### Database
+database:
+  name: "my_db"
+  url: "my_url"
+  port: 3936
+  user: "my_user"
