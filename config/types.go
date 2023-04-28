@@ -1,9 +1,9 @@
 package config
 
 type Config struct {
-	OpenAIConfig   OpenAIConfig   `yaml:"openai"`
-	PineconeConfig PineconeConfig `yaml:"pinecone"`
-	DatabaseConfig DBConfig       `yaml:"database"`
+	OpenAIConfig   *OpenAIConfig   `yaml:"openai"`
+	PineconeConfig *PineconeConfig `yaml:"pinecone"`
+	DatabaseConfig *DBConfig       `yaml:"database"`
 }
 
 type OpenAIConfig struct {

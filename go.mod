@@ -4,6 +4,7 @@ go 1.20
 
 require (
 	fyne.io/fyne/v2 v2.3.3
+	github.com/google/uuid v1.3.0
 	github.com/nekomeowww/go-pinecone v0.0.1
 	github.com/sashabaranov/go-openai v1.9.0
 	gopkg.in/yaml.v2 v2.4.0

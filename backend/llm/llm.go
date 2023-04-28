@@ -50,6 +50,15 @@ func (b *ChatBot) Chat(input string) string {
 	return b.processStreamToString(stream)
 }
 
+func (b *ChatBot) ChatStream(input string) *openai.ChatCompletionStream {
+	req := b.getRequest(input)
+	stream, err := b.processRequest(context.Background(), req)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return stream
+}
+
 func (b *ChatBot) getRequest(input string) openai.ChatCompletionRequest {
 	// TODO maybe add user here to track who said what
 	messages := []openai.ChatCompletionMessage{

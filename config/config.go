@@ -1,9 +1,11 @@
 package config
 
-import "os"
+import (
+	"os"
+)
 import "gopkg.in/yaml.v2"
 
-func NewConfig() *Config {
+func NewConfig() Config {
 	f, err := os.Open(PropertiesFile)
 	if err != nil {
 		panic(err)
@@ -21,5 +23,5 @@ func NewConfig() *Config {
 	cfg.OpenAIConfig.APIKey = os.Getenv("OPENAI_KEY")
 	cfg.DatabaseConfig.Password = os.Getenv("DB_PASSWORD")
 	cfg.PineconeConfig.APIKey = os.Getenv("PINECONE_KEY")
-	return &cfg
+	return cfg
 }

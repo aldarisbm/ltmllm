@@ -8,11 +8,9 @@ import (
 
 func main() {
 	cfg := config.NewConfig()
-
 	// Get a new ChatBot
-	cb := backend.GetNewBot(cfg)
-
+	cb := backend.GetNewBot(&cfg)
 	// Run the frontend
-	mw := frontend.NewWindow(cb)
+	mw := frontend.NewWindow(&cb)
 	mw.ShowAndRun()
 }
