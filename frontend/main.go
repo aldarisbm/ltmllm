@@ -1,32 +1,34 @@
-package main
+package frontend
 
 import (
-	"fmt"
-	"frontend/config"
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
+	"github.com/aldarisbm/ltmllm/backend/llm"
+	"github.com/aldarisbm/ltmllm/config"
 )
 
-func main() {
-	defer tidyUp()
+func NewWindow(cb llm.ChatBot) fyne.Window {
 	myApp := app.New()
 	mainWindow := myApp.NewWindow(config.WindowName)
 	mainWindow.Resize(fyne.NewSize(600, 800))
 	mainWindow.SetFixedSize(true)
 
-	//button := canvas.NewText("centered", color.White)
-	//centered := container.New(layout.NewHBoxLayout(), layout.NewSpacer(), button, layout.NewSpacer())
-	mainWindow.SetContent(container.New(layout.NewVBoxLayout(), layout.NewSpacer(), widget.NewButtonWithIcon("send", theme.ConfirmIcon(), func() {
-		fmt.Printf("Button tapped\n")
-	}), layout.NewSpacer()))
+	nl := widget.NewLabel("")
+	c := widget.NewCard("Chat", "Chat with the bot", nl)
+	mainWindow.SetContent(
+		container.New(
+			layout.NewVBoxLayout(),
+			c,
+			layout.NewSpacer(),
+			widget.NewButtonWithIcon("send", theme.ConfirmIcon(), func() {
+				msg := cb.Chat("tell me about the history of golang")
+				c.SetContent(widget.NewLabel(msg))
+			}),
+			layout.NewSpacer()))
 
-	mainWindow.ShowAndRun()
-}
-
-func tidyUp() {
-	fmt.Println("exited")
+	return mainWindow
 }

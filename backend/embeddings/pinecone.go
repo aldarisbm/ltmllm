@@ -1,15 +1,15 @@
-package llm
+package embeddings
 
 import (
 	"github.com/nekomeowww/go-pinecone"
 	"log"
 )
 
-func (b *ChatBot) NewPineconeClient() {
+func (e *Embeddings) NewPineconeClient() {
 	client, err := pinecone.New(
-		pinecone.WithAPIKey(b.Cfg.PineconeConfig.APIKey),
-		pinecone.WithEnvironment(b.Cfg.PineconeConfig.Environment),
-		pinecone.WithProjectName(b.Cfg.PineconeConfig.ProjectName),
+		pinecone.WithAPIKey(e.Cfg.PineconeConfig.APIKey),
+		pinecone.WithEnvironment(e.Cfg.PineconeConfig.Environment),
+		pinecone.WithProjectName(e.Cfg.PineconeConfig.ProjectName),
 	)
 	if err != nil {
 		log.Fatal(err)

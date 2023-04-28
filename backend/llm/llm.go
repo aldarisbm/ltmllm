@@ -25,18 +25,32 @@ func NewChatBot(cfg *config.Config) ChatBot {
 	}
 }
 
-func (b *ChatBot) Chat() {
+func (b *ChatBot) ChatStdInput() {
 	for {
 		input := b.getStdInput()
 		if input == "quit" {
 			break
 		}
-		b.sendRequest(input)
+		req := b.getRequest(input)
+		stream, err := b.processRequest(context.Background(), req)
+		if err != nil {
+			log.Fatal(err)
+		}
+		b.processStream(stream)
+		fmt.Println()
 	}
 }
 
-func (b *ChatBot) sendRequest(input string) {
-	ctx := context.Background()
+func (b *ChatBot) Chat(input string) string {
+	req := b.getRequest(input)
+	stream, err := b.processRequest(context.Background(), req)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return b.processStreamToString(stream)
+}
+
+func (b *ChatBot) getRequest(input string) openai.ChatCompletionRequest {
 	// TODO maybe add user here to track who said what
 	messages := []openai.ChatCompletionMessage{
 		{
@@ -57,22 +71,19 @@ func (b *ChatBot) sendRequest(input string) {
 		N:           b.Cfg.OpenAIConfig.ModelN,
 		Stream:      b.Cfg.OpenAIConfig.Stream,
 	}
-	if err := b.processRequest(ctx, req); err != nil {
-		log.Panic(err)
-	}
+	return req
 }
 
-func (b *ChatBot) processRequest(ctx context.Context, req openai.ChatCompletionRequest) error {
+func (b *ChatBot) processRequest(ctx context.Context, req openai.ChatCompletionRequest) (*openai.ChatCompletionStream, error) {
 	stream, err := b.client.CreateChatCompletionStream(ctx, req)
 	if err != nil {
-		fmt.Printf("ChatCompletionStream error: %v\n", err)
+		return nil, fmt.Errorf("ChatCompletionStream error: %v\n", err)
 	}
-	defer stream.Close()
-	b.processStream(stream)
-	return nil
+	return stream, err
 }
 
 func (b *ChatBot) processStream(stream *openai.ChatCompletionStream) {
+	defer stream.Close()
 	for {
 		resp, err := stream.Recv()
 		if err == io.EOF {
@@ -92,4 +103,18 @@ func (b *ChatBot) getStdInput() string {
 	trimmedInput := strings.TrimSpace(input)
 
 	return trimmedInput
+}
+
+func (b *ChatBot) processStreamToString(stream *openai.ChatCompletionStream) string {
+	defer stream.Close()
+	var sb strings.Builder
+	for {
+		resp, err := stream.Recv()
+		if err == io.EOF {
+			break
+		}
+		sb.WriteString(resp.Choices[0].Delta.Content)
+		fmt.Print(resp.Choices[0].Delta.Content)
+	}
+	return sb.String()
 }
