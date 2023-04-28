@@ -29,6 +29,7 @@ require (
 )
 
 require (
+	fyne.io/fyne/v2 v2.3.3 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.15.2 // indirect
 	github.com/imroc/req/v3 v3.33.2 // indirect
