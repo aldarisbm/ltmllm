@@ -46,7 +46,8 @@ func NewWindow(cb *llm.ChatBot) fyne.Window {
 			nl.SetText(nl.Text + m.Choices[0].Delta.Content)
 			responseText += m.Choices[0].Delta.Content
 		}
-		defer saveMessages(convo, userPrompt, response, nl.Text)
+		response.Content = nl.Text
+		defer saveMessages(convo, userPrompt, response)
 	})
 
 	formBox := widget.NewForm(
@@ -67,8 +68,7 @@ func NewWindow(cb *llm.ChatBot) fyne.Window {
 	return mainWindow
 }
 
-func saveMessages(convo shared.Conversation, prompt *shared.Message, response *shared.Message, responseContent string) {
-	response.Content = responseContent
+func saveMessages(convo shared.Conversation, prompt *shared.Message, response *shared.Message) {
 	convo.AddMessage(prompt)
 	convo.AddMessage(response)
 }
