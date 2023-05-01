@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"github.com/aldarisbm/ltmllm/backend/embeddings"
 	"github.com/aldarisbm/ltmllm/backend/vector"
 	"github.com/aldarisbm/ltmllm/config"
@@ -28,10 +27,5 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	ups, err := pc.UpsertEmbedding(context.Background(), m, emb)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Printf("Upserted: %+v\n", ups)
-
+	pc.Upsert(m, emb)
 }

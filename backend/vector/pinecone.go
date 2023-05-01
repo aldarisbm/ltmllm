@@ -1,19 +1,24 @@
 package vector
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/aldarisbm/ltmllm/config"
 	structpb "github.com/golang/protobuf/ptypes/struct"
 	"github.com/google/uuid"
 	"github.com/nekomeowww/go-pinecone"
 	"github.com/pinecone-io/go-pinecone/pinecone_grpc"
+	"io"
 	"log"
+	"net/http"
 )
 
 type Pinecone struct {
 	client *pinecone.Client
 	index  *pinecone.Index
+	cfg    *config.Config
 }
 
 func NewPineconeClient(cfg *config.Config) (Pinecone, error) {
@@ -32,6 +37,7 @@ func NewPineconeClient(cfg *config.Config) (Pinecone, error) {
 	return Pinecone{
 		client: client,
 		index:  index,
+		cfg:    cfg,
 	}, nil
 }
 func (p *Pinecone) ListIndexes() {
@@ -59,12 +65,63 @@ func (p *Pinecone) UpsertEmbedding(ctx context.Context, msg string, embeddings [
 				},
 			},
 		},
-		Namespace: "test",
+		Namespace: "llm",
 	}
 	resp, err := p.index.Upsert(ctx, &req)
 	if err != nil {
 		return nil, fmt.Errorf("upserting: %v", err)
 	}
+	p.index.Close()
 
 	return resp, nil
+}
+
+func (p *Pinecone) Upsert(msg string, embeddings []float32) {
+	upsertReq := UpsertReq{
+		Vectors: []Vector{
+			{
+				Id:     uuid.New().String(),
+				Values: embeddings,
+				Metadata: Metadata{
+					Message: msg,
+				},
+			},
+		},
+		Namespace: "llm",
+	}
+	url := fmt.Sprintf("https://%s-%s.svc.%s.pinecone.io/vectors/upsert", p.cfg.PineconeConfig.IndexName, p.cfg.PineconeConfig.ProjectName, p.cfg.PineconeConfig.Environment)
+	b, err := json.Marshal(upsertReq)
+	if err != nil {
+		log.Fatal(err)
+	}
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(b))
+	if err != nil {
+		log.Fatal(err)
+	}
+	req.Header.Add("accept", "application/json")
+	req.Header.Add("content-type", "application/json")
+	req.Header.Add("Api-Key", p.cfg.PineconeConfig.APIKey)
+	res, _ := http.DefaultClient.Do(req)
+	defer res.Body.Close()
+	body, err := io.ReadAll(res.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("req: %+v\n", req)
+	fmt.Printf("%+v\n", string(body))
+}
+
+type UpsertReq struct {
+	Vectors   []Vector `json:"vectors"`
+	Namespace string   `json:"namespace"`
+}
+
+type Vector struct {
+	Id       string    `json:"id"`
+	Values   []float32 `json:"values"`
+	Metadata Metadata  `json:"metadata"`
+}
+
+type Metadata struct {
+	Message string `json:"message"`
 }
