@@ -6,24 +6,33 @@ import (
 	"github.com/sashabaranov/go-openai"
 )
 
-type Embeddings struct {
+type Embedding struct {
 	client *openai.Client
-	Cfg    *config.Config
 }
 
-func NewEmbedding(cfg *config.Config) Embeddings {
+func NewEmbeddingClient(cfg *config.Config) Embedding {
 	c := openai.NewClient(cfg.OpenAIConfig.APIKey)
-	return Embeddings{
+	return Embedding{
 		client: c,
-		Cfg:    cfg,
 	}
 }
 
-func (e *Embeddings) CreateEmbeddings(ctx context.Context, s string) *openai.EmbeddingResponse {
+func (e *Embedding) CreateEmbedding(ctx context.Context, s string) ([]float32, error) {
 	req := openai.EmbeddingRequest{
 		Input: []string{s},
 		Model: openai.AdaEmbeddingV2,
 	}
-	resp, _ := e.client.CreateEmbeddings(ctx, req)
-	return &resp
+	resp, err := e.client.CreateEmbeddings(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	return resp.Data[0].Embedding, nil
+}
+
+func (e *Embedding) ListEngines(ctx context.Context) ([]openai.Engine, error) {
+	resp, err := e.client.ListEngines(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return resp.Engines, nil
 }
