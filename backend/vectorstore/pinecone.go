@@ -1,4 +1,4 @@
-package vector
+package vectorstore
 
 import (
 	"bytes"
@@ -48,6 +48,13 @@ func (p *Pinecone) ListIndexes() {
 	log.Printf("Indexes: %+v\n", indexes)
 }
 
+func (p *Pinecone) DeleteIndex(indexName string) {
+	err := p.client.DeleteIndex(context.Background(), indexName)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
 func (p *Pinecone) UpsertEmbedding(ctx context.Context, msg string, embeddings []float32) (*pinecone_grpc.UpsertResponse, error) {
 	req := pinecone_grpc.UpsertRequest{
 		Vectors: []*pinecone_grpc.Vector{
@@ -80,11 +87,9 @@ func (p *Pinecone) Upsert(msg string, embeddings []float32) {
 	upsertReq := UpsertReq{
 		Vectors: []Vector{
 			{
-				Id:     uuid.New().String(),
-				Values: embeddings,
-				Metadata: Metadata{
-					Message: msg,
-				},
+				Id:       uuid.New().String(),
+				Values:   embeddings,
+				Metadata: map[string]any{"message": msg},
 			},
 		},
 		Namespace: "llm",
@@ -117,11 +122,7 @@ type UpsertReq struct {
 }
 
 type Vector struct {
-	Id       string    `json:"id"`
-	Values   []float32 `json:"values"`
-	Metadata Metadata  `json:"metadata"`
-}
-
-type Metadata struct {
-	Message string `json:"message"`
+	Id       string         `json:"id"`
+	Values   []float32      `json:"values"`
+	Metadata map[string]any `json:"metadata"`
 }

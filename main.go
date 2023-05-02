@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"github.com/aldarisbm/ltmllm/backend/embeddings"
-	"github.com/aldarisbm/ltmllm/backend/vector"
+	"github.com/aldarisbm/ltmllm/backend/vectorstore"
 	"github.com/aldarisbm/ltmllm/config"
 )
 
@@ -23,7 +23,8 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	pc, err := vector.NewPineconeClient(&cfg)
+	pc, err := vectorstore.NewPineconeClient(&cfg)
+
 	if err != nil {
 		panic(err)
 	}
