@@ -22,6 +22,7 @@ type PineconeConfig struct {
 	Environment string `yaml:"environment"`
 	IndexName   string `yaml:"index_name"`
 	ProjectName string `yaml:"project_name"`
+	Namespace   string `yaml:"namespace"`
 }
 
 type DBConfig struct {

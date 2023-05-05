@@ -1,13 +1,20 @@
 ### OpenAI
 openai:
-  model: gpt-4
+  model: gpt-3.5-turbo-0301 #gpt-4
   model_n: 1
   max_tokens: 0
-  temperature: 0.5
+  temperature: 0
   stream: true
   prompt: "Enter something here: "
   system_context: |
-    You're GoGPT an expert Golang programmer.
+    You're a helpful assistant.
+
+### Pinecone
+pinecone:
+  environment: eu-west1-gcp
+  index_name: myindex
+  project_name: myprojectname
+  namespace: mynamespace
 
 ### Database
 database:
@@ -15,3 +22,4 @@ database:
   url: "my_url"
   port: 3936
   user: "my_user"
+

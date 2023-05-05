@@ -2,18 +2,12 @@ package main
 
 import (
 	"context"
+	"fmt"
+	"github.com/aldarisbm/go-pinecone"
 	"github.com/aldarisbm/ltmllm/backend/embeddings"
-	"github.com/aldarisbm/ltmllm/backend/vectorstore"
 	"github.com/aldarisbm/ltmllm/config"
+	"github.com/google/uuid"
 )
-
-//	cfg := config.NewConfig()
-//	// Get a new ChatBot
-//	cb := backend.GetNewBot(&cfg)
-//	// Run the frontend
-//	mw := frontend.NewWindow(&cb)
-//	mw.ShowAndRun()
-//}
 
 func main() {
 	cfg := config.NewConfig()
@@ -23,10 +17,27 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	pc, err := vectorstore.NewPineconeClient(&cfg)
 
+	namespace := cfg.PineconeConfig.Namespace
+	pc, err := pinecone.NewIndexClient(
+		pinecone.WithAPIKey(cfg.PineconeConfig.APIKey),
+		pinecone.WithEnvironment(cfg.PineconeConfig.Environment),
+		pinecone.WithProjectName(cfg.PineconeConfig.ProjectName),
+		pinecone.WithIndexName(cfg.PineconeConfig.IndexName),
+	)
+
+	id := uuid.New()
+	params := pinecone.UpsertVectorsParams{
+		Vectors: []*pinecone.Vector{{
+			ID:       id.String(),
+			Values:   emb,
+			Metadata: map[string]any{"text": m},
+		}},
+		Namespace: namespace,
+	}
+	resp, err := pc.UpsertVectors(context.Background(), params)
 	if err != nil {
 		panic(err)
 	}
-	pc.Upsert(m, emb)
+	fmt.Println(resp.UpsertedCount)
 }

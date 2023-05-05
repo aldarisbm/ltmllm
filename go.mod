@@ -4,6 +4,7 @@ go 1.20
 
 require (
 	fyne.io/fyne/v2 v2.3.3
+	github.com/aldarisbm/go-pinecone v0.0.0-20230505131656-79d9c56828ca
 	github.com/golang/protobuf v1.5.3
 	github.com/google/uuid v1.3.0
 	github.com/nekomeowww/go-pinecone v0.0.1
