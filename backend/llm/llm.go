@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"context"
 	"fmt"
-	"github.com/aldarisbm/ltmllm/config"
 	"github.com/sashabaranov/go-openai"
 	"io"
 	"log"
@@ -13,16 +12,16 @@ import (
 )
 
 type ChatBot struct {
-	client *openai.Client
-	Cfg    *config.Config
-}
+	apiKey        string
+	systemContext string
+	model         string
+	temperature   float32
+	topP          float64
+	n             int
+	stream        bool
+	prompt        string
 
-func NewChatBot(cfg *config.Config) ChatBot {
-	c := openai.NewClient(cfg.OpenAIConfig.APIKey)
-	return ChatBot{
-		client: c,
-		Cfg:    cfg,
-	}
+	client *openai.Client
 }
 
 func (b *ChatBot) ChatStdInput() {
@@ -63,7 +62,7 @@ func (b *ChatBot) getRequest(input string) openai.ChatCompletionRequest {
 	// TODO maybe add user here to track who said what
 	messages := []openai.ChatCompletionMessage{
 		{
-			Content: b.Cfg.OpenAIConfig.SystemContext,
+			Content: b.systemContext,
 			Role:    openai.ChatMessageRoleSystem,
 		},
 		{
@@ -73,12 +72,12 @@ func (b *ChatBot) getRequest(input string) openai.ChatCompletionRequest {
 	}
 
 	req := openai.ChatCompletionRequest{
-		Model:       b.Cfg.OpenAIConfig.Model,
+		Model:       b.model,
 		Messages:    messages,
-		Temperature: b.Cfg.OpenAIConfig.Temperature,
+		Temperature: b.temperature,
 		TopP:        1,
-		N:           b.Cfg.OpenAIConfig.ModelN,
-		Stream:      b.Cfg.OpenAIConfig.Stream,
+		N:           b.n,
+		Stream:      b.stream,
 	}
 	return req
 }
@@ -103,7 +102,7 @@ func (b *ChatBot) processStream(stream *openai.ChatCompletionStream) {
 }
 
 func (b *ChatBot) getStdInput() string {
-	fmt.Print(b.Cfg.OpenAIConfig.Prompt)
+	fmt.Print(b.prompt)
 	reader := bufio.NewReader(os.Stdin)
 	input, err := reader.ReadString('\n')
 	if err != nil {
