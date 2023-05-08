@@ -16,10 +16,10 @@ type ChatBot struct {
 	systemContext string
 	model         string
 	temperature   float32
-	topP          float64
 	n             int
-	stream        bool
 	prompt        string
+	topP          float32
+	stream        bool
 
 	client *openai.Client
 }
@@ -75,7 +75,7 @@ func (b *ChatBot) getRequest(input string) openai.ChatCompletionRequest {
 		Model:       b.model,
 		Messages:    messages,
 		Temperature: b.temperature,
-		TopP:        1,
+		TopP:        b.topP,
 		N:           b.n,
 		Stream:      b.stream,
 	}

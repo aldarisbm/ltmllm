@@ -6,21 +6,22 @@ func NewChatBot(opts ...func(*ChatBot)) *ChatBot {
 	const (
 		systemContext = "You're a helpful assistant"
 		model         = "gpt-3.5-turbo"
-		temperature   = 0.7
-		topP          = 1.0
+		temperature   = 0
+		topP          = 0.5
 		n             = 1
 		stream        = true
-		prompt        = "Enter your message: "
+		prompt        = "How can I help you today?"
 	)
 
+	// topP, n,  and stream are set to default values always
 	cb := ChatBot{
 		systemContext: systemContext,
 		model:         model,
 		temperature:   temperature,
-		topP:          topP,
 		n:             n,
-		stream:        stream,
 		prompt:        prompt,
+		topP:          topP,
+		stream:        stream,
 	}
 
 	for _, o := range opts {
@@ -54,24 +55,6 @@ func WithModel(model string) func(*ChatBot) {
 func WithTemperature(temperature float32) func(*ChatBot) {
 	return func(cb *ChatBot) {
 		cb.temperature = temperature
-	}
-}
-
-func WithTopP(topP float64) func(*ChatBot) {
-	return func(cb *ChatBot) {
-		cb.topP = topP
-	}
-}
-
-func WithN(n int) func(*ChatBot) {
-	return func(cb *ChatBot) {
-		cb.n = n
-	}
-}
-
-func WithStream(stream bool) func(*ChatBot) {
-	return func(cb *ChatBot) {
-		cb.stream = stream
 	}
 }
 

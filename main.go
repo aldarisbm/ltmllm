@@ -20,7 +20,6 @@ func main() {
 		llm.WithSystemContext(cfg.OpenAIConfig.SystemContext),
 		llm.WithModel(cfg.OpenAIConfig.Model),
 		llm.WithTemperature(cfg.OpenAIConfig.Temperature),
-		llm.WithStream(cfg.OpenAIConfig.Stream),
 		llm.WithPrompt(cfg.OpenAIConfig.Prompt),
 	)
 	chatBot.ChatStdInput()
