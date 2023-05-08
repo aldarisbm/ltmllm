@@ -18,6 +18,7 @@ pinecone:
 
 ### Database
 database:
+  path: "path/to/db"
   name: "my_db"
   url: "my_url"
   port: 3936

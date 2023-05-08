@@ -31,4 +31,5 @@ type DBConfig struct {
 	Port     string `yaml:"port"`
 	User     string `yaml:"user"`
 	Password string `yaml:"password"`
+	Path     string `yaml:"path"`
 }
