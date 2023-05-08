@@ -7,10 +7,10 @@ func NewChatBot(opts ...func(*ChatBot)) *ChatBot {
 		systemContext = "You're a helpful assistant"
 		model         = "gpt-3.5-turbo"
 		temperature   = 0
-		topP          = 0.5
+		topP          = 1
 		n             = 1
 		stream        = true
-		prompt        = "How can I help you today?"
+		prompt        = "How can I help you today?: "
 	)
 
 	// topP, n,  and stream are set to default values always
