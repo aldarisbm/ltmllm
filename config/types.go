@@ -1,6 +1,6 @@
 package config
 
-type Config struct {
+type config struct {
 	OpenAIConfig   *OpenAIConfig   `yaml:"openai"`
 	PineconeConfig *PineconeConfig `yaml:"pinecone"`
 	DatabaseConfig *DBConfig       `yaml:"database"`

@@ -1,4 +1,4 @@
 package config
 
-const PropertiesFile = "config.yml"
+const DefaultPropertiesFile = "config.yml"
 const WindowName = "ltmllm"

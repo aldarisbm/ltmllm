@@ -5,14 +5,21 @@ import (
 )
 import "gopkg.in/yaml.v2"
 
-func NewConfig() Config {
-	f, err := os.Open(PropertiesFile)
+// NewConfig loads the configuration from the properties file
+// and returns a config struct.
+func NewConfig() config {
+	propertiesFile := os.Getenv("PROPERTIES_FILE")
+	if propertiesFile == "" {
+		propertiesFile = DefaultPropertiesFile
+	}
+
+	f, err := os.Open(propertiesFile)
 	if err != nil {
 		panic(err)
 	}
 	defer f.Close()
 
-	var cfg Config
+	var cfg config
 	decoder := yaml.NewDecoder(f)
 	err = decoder.Decode(&cfg)
 	if err != nil {
