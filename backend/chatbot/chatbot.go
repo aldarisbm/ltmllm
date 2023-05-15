@@ -1,9 +1,10 @@
-package llm
+package chatbot
 
 import (
 	"bufio"
 	"context"
 	"fmt"
+	memory "github.com/aldarisbm/memory/pkg"
 	"github.com/sashabaranov/go-openai"
 	"io"
 	"log"
@@ -22,9 +23,10 @@ type ChatBot struct {
 	stream        bool
 
 	client *openai.Client
+	memory *memory.Memory
 }
 
-func (b *ChatBot) ChatStdInput() {
+func (b *ChatBot) StdInput() {
 	for {
 		input := b.getStdInput()
 		if input == "quit" {
@@ -60,6 +62,12 @@ func (b *ChatBot) ChatStream(input string) *openai.ChatCompletionStream {
 
 func (b *ChatBot) getRequest(input string) openai.ChatCompletionRequest {
 	// TODO maybe add user here to track who said what
+	doc := b.memory.NewDocument(input, "aldarisbm")
+	if err := b.memory.StoreDocument(doc); err != nil {
+		// should probably not be a panic
+		panic(err)
+	}
+
 	messages := []openai.ChatCompletionMessage{
 		{
 			Content: b.systemContext,
@@ -92,11 +100,17 @@ func (b *ChatBot) processRequest(ctx context.Context, req openai.ChatCompletionR
 
 func (b *ChatBot) processStream(stream *openai.ChatCompletionStream) {
 	defer stream.Close()
+	var sb strings.Builder
 	for {
 		resp, err := stream.Recv()
 		if err == io.EOF {
+			document := b.memory.NewDocument(sb.String(), "chatbot")
+			if err := b.memory.StoreDocument(document); err != nil {
+				panic(err)
+			}
 			break
 		}
+		sb.WriteString(resp.Choices[0].Delta.Content)
 		fmt.Print(resp.Choices[0].Delta.Content)
 	}
 }

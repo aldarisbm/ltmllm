@@ -1,26 +1,40 @@
 package main
 
 import (
-	"github.com/aldarisbm/ltmllm/backend/llm"
+	"github.com/aldarisbm/ltmllm/backend/chatbot"
 	"github.com/aldarisbm/ltmllm/config"
+	memory "github.com/aldarisbm/memory/pkg"
+	openai "github.com/aldarisbm/memory/pkg/embeddings/openai"
+	pc "github.com/aldarisbm/memory/pkg/vectorstore/pinecone"
+	"os"
 )
 
 func main() {
+	embedder := openai.NewOpenAIEmbedder(
+		openai.WithApiKey(os.Getenv("OPENAI_API_KEY")),
+	)
 
-	//db, err := bolt.Open(cfg.DatabaseConfig.Path, 0600, nil)
-	//if err != nil {
-	//	panic(err)
-	//}
-	//defer db.Close()
+	vectorStore := pc.NewStorer(
+		pc.WithApiKey(os.Getenv("PINECONE_API_KEY")),
+		pc.WithIndexName(os.Getenv("PINECONE_INDEX_NAME")),
+		pc.WithProjectName(os.Getenv("PINECONE_PROJECT_NAME")),
+		pc.WithEnvironment(os.Getenv("PINECONE_ENVIRONMENT")),
+	)
+
+	ltm := memory.NewMemory(
+		memory.WithEmbedder(embedder),
+		memory.WithVectorStore(vectorStore),
+	)
 
 	cfg := config.NewConfig()
 
-	chatBot := llm.NewChatBot(
-		llm.WithApiKey(cfg.OpenAIConfig.APIKey),
-		llm.WithSystemContext(cfg.OpenAIConfig.SystemContext),
-		llm.WithModel(cfg.OpenAIConfig.Model),
-		llm.WithTemperature(cfg.OpenAIConfig.Temperature),
-		llm.WithPrompt(cfg.OpenAIConfig.Prompt),
+	chatBot := chatbot.New(
+		chatbot.WithApiKey(cfg.OpenAIConfig.APIKey),
+		chatbot.WithSystemContext(cfg.OpenAIConfig.SystemContext),
+		chatbot.WithModel(cfg.OpenAIConfig.Model),
+		chatbot.WithTemperature(cfg.OpenAIConfig.Temperature),
+		chatbot.WithPrompt(cfg.OpenAIConfig.Prompt),
+		chatbot.WithMemory(ltm),
 	)
-	chatBot.ChatStdInput()
+	chatBot.StdInput()
 }

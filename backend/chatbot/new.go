@@ -1,8 +1,11 @@
-package llm
+package chatbot
 
-import "github.com/sashabaranov/go-openai"
+import (
+	memory "github.com/aldarisbm/memory/pkg"
+	"github.com/sashabaranov/go-openai"
+)
 
-func NewChatBot(opts ...func(*ChatBot)) *ChatBot {
+func New(opts ...func(*ChatBot)) *ChatBot {
 	const (
 		systemContext = "You're a helpful assistant"
 		model         = "gpt-3.5-turbo"
@@ -61,5 +64,11 @@ func WithTemperature(temperature float32) func(*ChatBot) {
 func WithPrompt(prompt string) func(*ChatBot) {
 	return func(cb *ChatBot) {
 		cb.prompt = prompt
+	}
+}
+
+func WithMemory(memory *memory.Memory) func(*ChatBot) {
+	return func(cb *ChatBot) {
+		cb.memory = memory
 	}
 }

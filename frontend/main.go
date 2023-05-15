@@ -8,7 +8,7 @@ import (
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
-	"github.com/aldarisbm/ltmllm/backend/llm"
+	"github.com/aldarisbm/ltmllm/backend/chatbot"
 	"github.com/aldarisbm/ltmllm/config"
 	"github.com/aldarisbm/ltmllm/shared"
 	"github.com/google/uuid"
@@ -16,7 +16,7 @@ import (
 	"time"
 )
 
-func NewWindow(cb *llm.ChatBot) fyne.Window {
+func NewWindow(cb *chatbot.ChatBot) fyne.Window {
 	mainWindow := setUpApp()
 	convo := shared.NewConversation()
 
