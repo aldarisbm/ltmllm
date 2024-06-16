@@ -6,10 +6,12 @@ import (
 	memory "github.com/aldarisbm/memory/pkg"
 	openai "github.com/aldarisbm/memory/pkg/embeddings/openai"
 	pc "github.com/aldarisbm/memory/pkg/vectorstore/pinecone"
+	"github.com/joho/godotenv"
 	"os"
 )
 
 func main() {
+	_ = godotenv.Load()
 	embedder := openai.NewOpenAIEmbedder(
 		openai.WithApiKey(os.Getenv("OPENAI_API_KEY")),
 	)
